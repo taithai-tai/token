@@ -16,7 +16,6 @@
     return Math.random().toString(36).slice(2, 10);
   }
 
-  // สร้างโทเคนแล้วส่งต่อไปหน้า target
   function create(options) {
     const opts = options || {};
     const target = opts.target || "index.html";
@@ -34,7 +33,6 @@
     window.location.href = url;
   }
 
-  // กันหน้าให้ต้องใช้โทเคน
   function guard(options) {
     const opts = options || {};
     const tokenPage = opts.tokenPage || "token.html";
