@@ -63,10 +63,6 @@
     const selector = opts.selector || "#app";
     const cleanUrl = opts.cleanUrl === true; // default = ไม่ลบ token ออกจาก URL
 
-    // ข้อความ default (ภาษาไทย)
-    const messages = opts.messages || {
-    };
-
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
 
