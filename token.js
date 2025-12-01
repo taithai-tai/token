@@ -1,37 +1,65 @@
+// token.js – One-time Token Library (Taithai)
+
+// ใช้ localStorage เก็บสถานะ token ใน browser / อุปกรณ์นั้น ๆ
+(function (window) {
+  const STORAGE_KEY = "tokensStore";
+
+  function getStore() {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return {};
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveStore(store) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+  }
+
+  function generate() {
+    return Math.random().toString(36).slice(2, 10);
+  }
+
+  // -----------------------------
+  // 1) สร้างโทเคนใหม่ + redirect ไปหน้า target
+  // -----------------------------
+  function create(options) {
+    const opts = options || {};
+    const target = opts.target || "index.html";
+    const extraQuery = opts.extraQuery || "";
+
+    const store = getStore();
+    const token = generate();
+
+    store[token] = { used: false, createdAt: Date.now() };
+    saveStore(store);
+
+    let url = target + "?token=" + encodeURIComponent(token);
+    if (extraQuery) url += "&" + extraQuery;
+
+    window.location.href = url;
+  }
+
   // -------------------------------------------------
   // 2) useOnce: โทเคน 1 อัน ใช้เข้าได้รอบเดียวใน browser นี้
-  //    - ไม่ redirect เอง
-  //    - ไม่สร้างโทเคนใหม่เอง
-  //    - ถ้า refresh → แล้วแต่ onAlreadyUsed จะทำอะไร
+  //    - ไม่แสดงข้อความเอง
+  //    - ให้หน้าเว็บเป็นคนกำหนดว่าจะทำอะไร
   // -------------------------------------------------
   function useOnce(options) {
     const opts = options || {};
-    const selector = opts.selector || "#app";
-    const cleanUrl = opts.cleanUrl === true; // default = ไม่ลบ token ออกจาก URL
+    const cleanUrl = opts.cleanUrl === true;
 
-    // callback (ถ้าไม่ใส่ จะไม่มีอะไรเกิดขึ้น)
-    const onFirstUse = opts.onFirstUse || null;
-    const onAlreadyUsed = opts.onAlreadyUsed || null;
-    const onInvalid = opts.onInvalid || null;
-
-    // ข้อความ default ไว้ใช้กรณีที่คุณไม่ส่ง callback มา
-    const defaultMessages = {
-      first: "🎉 ยินดีต้อนรับ! โทเคนนี้ถูกต้อง และเพิ่งถูกใช้ครั้งแรกในอุปกรณ์นี้",
-      used: "⛔ โทเคนนี้ถูกใช้ไปแล้วในอุปกรณ์นี้",
-      invalid: "❌ โทเคนไม่ถูกต้อง หรือไม่เคยถูกสร้างในอุปกรณ์นี้"
-    };
-
-    // ถ้าอยาก override ข้อความ สามารถส่ง opts.messages เข้ามาได้
-    const messages = Object.assign({}, defaultMessages, opts.messages || {});
+    const onFirstUse = opts.onFirstUse || function () {};
+    const onAlreadyUsed = opts.onAlreadyUsed || function () {};
+    const onInvalid = opts.onInvalid || function () {};
 
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
 
     if (!token) {
-      if (onInvalid) {
-        return onInvalid("missing_token");
-      }
-      renderMessage(messages.invalid + " (missing token)", selector);
+      onInvalid("missing_token");
       return;
     }
 
@@ -39,18 +67,12 @@
     const info = store[token];
 
     if (!info) {
-      if (onInvalid) {
-        return onInvalid("not_found");
-      }
-      renderMessage(messages.invalid + " (not found)", selector);
+      onInvalid("not_found");
       return;
     }
 
     if (info.used) {
-      if (onAlreadyUsed) {
-        return onAlreadyUsed({ token, info });
-      }
-      renderMessage(messages.used, selector);
+      onAlreadyUsed({ token, info });
       return;
     }
 
@@ -66,11 +88,12 @@
       window.history.replaceState({}, "", url.pathname + url.search);
     }
 
-    // ถ้ามี onFirstUse → ให้ callback เป็นคนตัดสินใจว่าจะทำอะไร
-    if (onFirstUse) {
-      return onFirstUse({ token, info });
-    }
-
-    // ถ้าไม่มี onFirstUse → ค่อยใช้ข้อความ default
-    renderMessage(messages.first, selector);
+    onFirstUse({ token, info });
   }
+
+  // export ออกไปให้หน้าเว็บเรียกใช้
+  window.Token = {
+    create,
+    useOnce,
+  };
+})(window);
