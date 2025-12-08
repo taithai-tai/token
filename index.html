@@ -1,14 +1,30 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <title>app | Taithai Open-Source Helpers</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Taithai Open-Source Helpers - กล่องเครื่องมือโอเพ่นซอร์สสำหรับเว็บแอป เช่น token.js และยูทิลิตีอื่น ๆ">
+  <meta name="description" content="Taithai Open-Source Helpers - toolkit for reusable web helpers like token.js">
   <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
+      /* Light mode (default) */
+      --bg-main: radial-gradient(circle at top, #f9fafb, #e5e7eb);
+      --card-bg: rgba(255, 255, 255, 0.96);
+      --card-soft: rgba(248, 250, 252, 0.96);
+      --accent: #f5b200;
+      --accent-soft: #b45309;
+      --text-main: #0f172a;
+      --text-muted: #6b7280;
+      --border-subtle: rgba(148, 163, 184, 0.6);
+      --shadow-soft: 0 18px 38px rgba(15, 23, 42, 0.18);
+      --radius-xl: 26px;
+      --radius-lg: 18px;
+      --toolbar-bg: rgba(255, 255, 255, 0.75);
+    }
+
+    :root[data-theme="dark"] {
       --bg-main: radial-gradient(circle at top, #151515, #050509);
       --card-bg: rgba(18, 18, 22, 0.96);
       --card-soft: rgba(22, 22, 30, 0.96);
@@ -16,10 +32,9 @@
       --accent-soft: #ffe6a3;
       --text-main: #f9fafb;
       --text-muted: #9ca3af;
-      --border-subtle: rgba(148, 163, 184, 0.3);
-      --shadow-soft: 0 20px 45px rgba(0, 0, 0, 0.8);
-      --radius-xl: 26px;
-      --radius-lg: 18px;
+      --border-subtle: rgba(148, 163, 184, 0.35);
+      --shadow-soft: 0 20px 45px rgba(0, 0, 0, 0.85);
+      --toolbar-bg: rgba(15, 23, 42, 0.8);
     }
 
     * {
@@ -35,7 +50,8 @@
       color: var(--text-main);
       display: flex;
       justify-content: center;
-      padding: 24px 16px 40px;
+      padding: 20px 12px 34px;
+      transition: background 0.3s ease, color 0.3s ease;
     }
 
     .page {
@@ -43,14 +59,73 @@
       max-width: 960px;
     }
 
+    /* Top toolbar */
+    .toolbar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .toolbar-inner {
+      display: inline-flex;
+      gap: 8px;
+      padding: 6px 8px;
+      border-radius: 999px;
+      background: var(--toolbar-bg);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(10px);
+      align-items: center;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.25);
+    }
+
+    .toolbar-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-right: 2px;
+    }
+
+    .toolbar-btn {
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 4px 10px;
+      font-size: 12px;
+      background: transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--text-muted);
+      transition: all 0.18s ease;
+    }
+
+    .toolbar-btn span.icon {
+      font-size: 13px;
+    }
+
+    .toolbar-btn.active {
+      background: var(--accent);
+      color: #111827;
+      border-color: rgba(15, 23, 42, 0.8);
+      box-shadow: 0 8px 20px rgba(245, 181, 58, 0.5);
+    }
+
+    .toolbar-btn:not(.active):hover {
+      background: rgba(148, 163, 184, 0.14);
+    }
+
     .hero {
-      background: linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.6));
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.06));
       border-radius: 32px;
-      padding: 24px 20px 26px;
-      border: 1px solid rgba(245, 192, 86, 0.5);
+      padding: 22px 18px 24px;
+      border: 1px solid rgba(245, 192, 86, 0.45);
       box-shadow: var(--shadow-soft);
       position: relative;
       overflow: hidden;
+    }
+
+    :root[data-theme="dark"] .hero {
+      border-color: rgba(245, 192, 86, 0.6);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.02), rgba(0, 0, 0, 0.7));
     }
 
     .hero::before {
@@ -69,7 +144,7 @@
       z-index: 1;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
     }
 
     .badge {
@@ -78,11 +153,15 @@
       gap: 8px;
       padding: 6px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(248, 250, 252, 0.16);
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(10px);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.04);
+      font-size: 12px;
       color: var(--accent-soft);
-      font-size: 13px;
+    }
+
+    :root[data-theme="dark"] .badge {
+      background: rgba(15, 23, 42, 0.8);
+      border-color: rgba(248, 250, 252, 0.16);
     }
 
     .badge-dot {
@@ -90,7 +169,7 @@
       height: 9px;
       border-radius: 999px;
       background: var(--accent);
-      box-shadow: 0 0 12px rgba(245, 192, 86, 0.9);
+      box-shadow: 0 0 12px rgba(245, 192, 86, 0.95);
     }
 
     .hero-title {
@@ -109,7 +188,7 @@
     }
 
     .hero-sub {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--text-muted);
       max-width: 640px;
     }
@@ -128,8 +207,8 @@
 
     .btn {
       border-radius: 999px;
-      padding: 9px 16px;
-      font-size: 14px;
+      padding: 8px 16px;
+      font-size: 13px;
       font-weight: 500;
       border: 1px solid transparent;
       display: inline-flex;
@@ -154,14 +233,22 @@
     }
 
     .btn-ghost {
-      background: rgba(15, 23, 42, 0.85);
+      background: rgba(148, 163, 184, 0.12);
       color: var(--accent-soft);
-      border-color: rgba(148, 163, 184, 0.6);
+      border-color: rgba(148, 163, 184, 0.7);
+    }
+
+    :root[data-theme="dark"] .btn-ghost {
+      background: rgba(15, 23, 42, 0.85);
     }
 
     .btn-ghost:hover {
-      background: rgba(15, 23, 42, 1);
+      background: rgba(148, 163, 184, 0.2);
       transform: translateY(-1px);
+    }
+
+    :root[data-theme="dark"] .btn-ghost:hover {
+      background: rgba(15, 23, 42, 1);
     }
 
     .btn-icon {
@@ -173,7 +260,7 @@
       flex-wrap: wrap;
       gap: 12px;
       margin-top: 6px;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
     }
 
@@ -211,18 +298,22 @@
       border-radius: var(--radius-xl);
       border: 1px solid var(--border-subtle);
       padding: 18px 16px 18px;
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.18);
+    }
+
+    :root[data-theme="dark"] .card {
       box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
     }
 
     .card h2 {
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 600;
       margin-bottom: 6px;
       letter-spacing: 0.01em;
     }
 
     .card p {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-muted);
       line-height: 1.6;
     }
@@ -235,11 +326,15 @@
     }
 
     .chip {
-      font-size: 12px;
+      font-size: 11px;
       padding: 4px 9px;
       border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.45);
+      border: 1px solid rgba(148, 163, 184, 0.55);
       color: var(--accent-soft);
+      background: rgba(248, 250, 252, 0.8);
+    }
+
+    :root[data-theme="dark"] .chip {
       background: rgba(15, 23, 42, 0.85);
     }
 
@@ -258,10 +353,10 @@
 
     .feature-pill {
       border-radius: var(--radius-lg);
-      padding: 10px 11px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
+      padding: 9px 11px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
       background: var(--card-soft);
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1.45;
     }
 
@@ -271,38 +366,39 @@
     }
 
     .section-title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       margin-bottom: 4px;
+      margin-top: 6px;
     }
 
     .code-block {
-      margin-top: 8px;
+      margin-top: 6px;
       background: #020617;
       border-radius: 14px;
-      padding: 10px 11px;
+      padding: 9px 11px;
       border: 1px solid rgba(15, 23, 42, 0.9);
       overflow-x: auto;
-      font-size: 12px;
+      font-size: 11.5px;
       line-height: 1.55;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       color: #e5e7eb;
     }
 
+    :root[data-theme="light"] .code-block {
+      background: #0b1220;
+    }
+
     .code-label {
       font-size: 11px;
       color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    code {
-      font-family: inherit;
+      margin-bottom: 3px;
     }
 
     .roadmap-list {
       margin-top: 6px;
       list-style: none;
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
     }
 
@@ -317,7 +413,7 @@
       width: 13px;
       height: 13px;
       border-radius: 4px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
+      border: 1px solid rgba(148, 163, 184, 0.8);
       margin-top: 2px;
       flex-shrink: 0;
     }
@@ -332,17 +428,17 @@
     }
 
     .section-footer {
-      margin-top: 10px;
-      font-size: 12px;
+      margin-top: 8px;
+      font-size: 11.5px;
       color: var(--text-muted);
     }
 
     .footer {
       margin-top: 18px;
       text-align: center;
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
-      opacity: 0.8;
+      opacity: 0.85;
     }
 
     .footer a {
@@ -353,208 +449,479 @@
     .footer a:hover {
       text-decoration: underline;
     }
+
+    /* Language pages */
+    .lang-page {
+      display: none;
+    }
+
+    .lang-page.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
-  <main class="page">
-    <section class="hero">
-      <div class="hero-inner">
-        <div class="badge">
-          <span class="badge-dot"></span>
-          <span>Taithai Open-Source Helpers · <strong>app</strong></span>
-        </div>
-
-        <h1 class="hero-title">
-          <span class="highlight">app</span>
-          <span>— Web Helper Toolkit</span>
-        </h1>
-
-        <p class="hero-sub">
-          A small open-source collection of <strong>reusable helpers</strong> and plug-ins
-          for my web projects — starting from <strong>token.js</strong> for client-side
-          token management, and expanding into a personal toolkit for future apps.
-        </p>
-
-        <div class="hero-actions">
-          <!-- เปลี่ยนลิงก์ GitHub ตาม repo ของคุณเองด้านล่างนี้ -->
-          <a class="btn btn-primary" href="https://github.com/taithai-tai/app" target="_blank" rel="noopener">
-            <span class="btn-icon">⭐</span>
-            <span>View on GitHub</span>
-          </a>
-          <a class="btn btn-ghost" href="#modules">
-            <span class="btn-icon">📚</span>
-            <span>View Modules & Usage</span>
-          </a>
-        </div>
-
-        <div class="hero-meta">
-          <span>Open-source</span>
-          <span>Lightweight & reusable</span>
-          <span>Made for my own real projects</span>
-        </div>
+  <div class="page">
+    <!-- Toolbar: theme + language -->
+    <div class="toolbar">
+      <div class="toolbar-inner">
+        <span class="toolbar-label">Mode</span>
+        <button class="toolbar-btn active" type="button" data-toggle-theme>
+          <span class="icon">🌙</span>
+          <span class="label">Dark</span>
+        </button>
+        <span class="toolbar-label" style="margin-left:6px;">Lang</span>
+        <button class="toolbar-btn active" type="button" data-lang-btn="en">
+          EN
+        </button>
+        <button class="toolbar-btn" type="button" data-lang-btn="th">
+          TH
+        </button>
       </div>
-    </section>
+    </div>
 
-    <section class="grid" id="modules">
-      <!-- ซ้าย: About & Features -->
-      <article class="card">
-        <h2>What is this project?</h2>
-        <p>
-          <strong>app</strong> is a personal sandbox for my reusable helper scripts.
-          Instead of rewriting the same logic in every new project, I collect
-          them here — clean, minimal, and ready to plug into any web app.
-        </p>
+    <!-- ENGLISH VERSION -->
+    <main id="page-en" class="lang-page active">
+      <section class="hero">
+        <div class="hero-inner">
+          <div class="badge">
+            <span class="badge-dot"></span>
+            <span>Taithai Open-Source · <strong>app</strong></span>
+          </div>
 
-        <div class="chip-row">
-          <span class="chip">Vanilla JS</span>
-          <span class="chip">Front-end Helpers</span>
-          <span class="chip">Copy &amp; Paste Ready</span>
-        </div>
+          <h1 class="hero-title">
+            <span class="highlight">app</span>
+            <span>— Web Helper Toolkit</span>
+          </h1>
 
-        <div class="features">
-          <div class="feature-pill">
-            <strong>Reusable.</strong> Helpers are designed to be dropped into any
-            static site or front-end project with minimal setup.
-          </div>
-          <div class="feature-pill">
-            <strong>Practical.</strong> Every helper exists because I actually
-            needed it in a real project.
-          </div>
-          <div class="feature-pill">
-            <strong>Simple.</strong> No frameworks required. Just HTML, CSS, and JS.
-          </div>
-          <div class="feature-pill">
-            <strong>Open.</strong> Licensed to let others learn from or reuse the code.
-          </div>
-        </div>
-
-        <div style="margin-top:12px;">
-          <div class="section-title">Current focus</div>
-          <p>
-            The first module in this toolkit is <strong>token.js</strong> — a small
-            client-side token manager built with <code>localStorage</code>, ideal for:
+          <p class="hero-sub">
+            <strong>app</strong> is my personal collection of small, reusable helpers
+            and plug-ins for web projects — starting with <strong>token.js</strong> for
+            client-side token flows, and growing into a minimalist toolkit for
+            future apps.
           </p>
-          <ul class="roadmap-list" style="margin-top:6px;">
+
+          <div class="hero-actions">
+            <!-- เปลี่ยนลิงก์ให้ตรงกับ repo จริงของคุณ -->
+            <a class="btn btn-primary" href="https://github.com/taithai-tai/app" target="_blank" rel="noopener">
+              <span class="btn-icon">⭐</span>
+              <span>View on GitHub</span>
+            </a>
+            <a class="btn btn-ghost" href="#modules-en">
+              <span class="btn-icon">📚</span>
+              <span>Modules &amp; Usage</span>
+            </a>
+          </div>
+
+          <div class="hero-meta">
+            <span>Open-source</span>
+            <span>Vanilla JS</span>
+            <span>Copy &amp; paste friendly</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid" id="modules-en">
+        <article class="card">
+          <h2>What is this project?</h2>
+          <p>
+            <strong>app</strong> is a small, opinionated toolbox where I store
+            scripts that I find myself reusing across multiple projects. Instead
+            of rewriting logic for every new idea, I centralize them here and
+            keep them simple, framework-free, and easy to understand.
+          </p>
+
+          <div class="chip-row">
+            <span class="chip">Vanilla JavaScript</span>
+            <span class="chip">Front-end helpers</span>
+            <span class="chip">Static-site friendly</span>
+          </div>
+
+          <div class="features">
+            <div class="feature-pill">
+              <strong>Reusable.</strong> Drop the helpers into any static site or
+              SPA with minimal setup.
+            </div>
+            <div class="feature-pill">
+              <strong>Practical.</strong> Every helper solves a real problem I had
+              in my own projects.
+            </div>
+            <div class="feature-pill">
+              <strong>Simple.</strong> No build step required — just HTML, CSS, JS.
+            </div>
+            <div class="feature-pill">
+              <strong>Open.</strong> Learn from the code or adapt it to your needs.
+            </div>
+          </div>
+
+          <div class="section-title">Current module: token.js</div>
+          <p>
+            <strong>token.js</strong> is a tiny client-side token manager using
+            <code>localStorage</code>, useful for lightweight access flows:
+          </p>
+          <ul class="roadmap-list">
             <li>
               <span class="box done"></span>
-              <span class="text">One-time access flows (simple “unlock page” logic)</span>
+              <span class="text">One-time access to a simple “protected” page</span>
             </li>
             <li>
               <span class="box"></span>
-              <span class="text">Preventing direct URL sharing without going through a start page</span>
+              <span class="text">Discouraging direct URL sharing without going through a start page</span>
             </li>
             <li>
               <span class="box"></span>
-              <span class="text">Lightweight gating for demo pages or mini tools</span>
+              <span class="text">Quick gating for demos, prototypes, or mini tools</span>
             </li>
           </ul>
-        </div>
-      </article>
+        </article>
 
-      <!-- ขวา: token.js usage -->
-      <article class="card">
-        <h2>token.js · Quick Start</h2>
-        <p>
-          <strong>token.js</strong> lets you create and validate simple tokens
-          on the client-side. No server required — it uses
-          <code>localStorage</code> to remember which tokens were used.
-        </p>
+        <article class="card">
+          <h2>token.js · Quick Start</h2>
+          <p>
+            <strong>token.js</strong> helps you create and validate tokens purely
+            in the browser. No backend is required.
+          </p>
 
-        <div style="margin-top:10px;">
           <div class="section-title">1. Include script</div>
           <div class="code-block">
-            <pre><code>&lt;script src="token/token.js"&gt;&lt;/script&gt;</code></pre>
+<pre><code>&lt;script src="token/token.js"&gt;&lt;/script&gt;</code></pre>
           </div>
-        </div>
 
-        <div style="margin-top:10px;">
           <div class="section-title">2. Create token &amp; redirect</div>
           <div class="code-label">Example: from a landing page</div>
           <div class="code-block">
 <pre><code>&lt;script&gt;
-  // Create a token and redirect to a protected page
   Token.create({
-    target: "secret.html",      // target page
-    extraQuery: "from=landing"  // optional extra query
+    target: "secret.html",      // page to go to
+    extraQuery: "from=landing"  // optional query string
   });
 &lt;/script&gt;</code></pre>
           </div>
-        </div>
 
-        <div style="margin-top:10px;">
           <div class="section-title">3. Validate token on target page</div>
           <div class="code-block">
 <pre><code>&lt;script src="token/token.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  // Optional: hide content by default in CSS
+  // Optional (via CSS): body { display: none; }
+
+  if (Token.validate()) {
+    document.body.style.display = "block";
+  } else {
+    window.location.href = "index.html"; // or any fallback page
+  }
+&lt;/script&gt;</code></pre>
+          </div>
+
+          <p class="section-footer">
+            The exact API may differ depending on the current implementation.
+            Always refer to the source file in the repository for the latest
+            behavior.
+          </p>
+        </article>
+      </section>
+
+      <section class="grid" style="margin-top:18px;">
+        <article class="card">
+          <h2>Roadmap</h2>
+          <ul class="roadmap-list">
+            <li>
+              <span class="box done"></span>
+              <span class="text">Create base project and token.js module</span>
+            </li>
+            <li>
+              <span class="box"></span>
+              <span class="text">Add more helpers (random utilities, DOM helpers, input validation)</span>
+            </li>
+            <li>
+              <span class="box"></span>
+              <span class="text">Support ES Modules for modern bundlers</span>
+            </li>
+            <li>
+              <span class="box"></span>
+              <span class="text">Add tests and more detailed examples</span>
+            </li>
+            <li>
+              <span class="box"></span>
+              <span class="text">Optionally publish as an npm package</span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2>About the developer</h2>
+          <p>
+            Hi! I'm <strong>Danupol Saengnakhon (Taithai)</strong> — a student who
+            enjoys experimenting with web technologies and building tiny tools
+            that make my own projects easier.
+          </p>
+          <p style="margin-top:8px;">
+            This repository started as a “toolbox for myself”, but if you find
+            something useful here, feel free to copy, learn, and improve it.
+          </p>
+          <p class="section-footer">
+            Contributions and ideas are welcome — open an Issue or a Pull
+            Request if you’d like to help. 🤝
+          </p>
+        </article>
+      </section>
+    </main>
+
+    <!-- THAI VERSION -->
+    <main id="page-th" class="lang-page">
+      <section class="hero">
+        <div class="hero-inner">
+          <div class="badge">
+            <span class="badge-dot"></span>
+            <span>Taithai Open-Source · <strong>app</strong></span>
+          </div>
+
+          <h1 class="hero-title">
+            <span class="highlight">app</span>
+            <span>— กล่องเครื่องมือ Web Helper</span>
+          </h1>
+
+          <p class="hero-sub">
+            <strong>app</strong> คือโปรเจกต์ที่ผมใช้เก็บโค้ดตัวช่วยเล็ก ๆ
+            สำหรับเว็บ เช่น <strong>token.js</strong> สำหรับจัดการโทเคนฝั่งลูกข่าย
+            ตั้งใจให้เป็น “ชุดเครื่องมือ” ที่เอาไปใช้ซ้ำกับโปรเจกต์ในอนาคตได้ง่าย ๆ
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://github.com/taithai-tai/app" target="_blank" rel="noopener">
+              <span class="btn-icon">⭐</span>
+              <span>เปิดดูบน GitHub</span>
+            </a>
+            <a class="btn btn-ghost" href="#modules-th">
+              <span class="btn-icon">📚</span>
+              <span>ดูโมดูล &amp; วิธีใช้</span>
+            </a>
+          </div>
+
+          <div class="hero-meta">
+            <span>โอเพ่นซอร์ส</span>
+            <span>Vanilla JS ล้วน</span>
+            <span>เน้นใช้งานจริง</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid" id="modules-th">
+        <article class="card">
+          <h2>โปรเจกต์นี้คืออะไร?</h2>
+          <p>
+            <strong>app</strong> เป็นเหมือนกล่องเครื่องมือเล็ก ๆ ที่ผมรวบรวมสคริปต์
+            หรือฟังก์ชันที่ใช้ซ้ำบ่อยในเว็บโปรเจกต์ต่าง ๆ แทนที่จะเขียนใหม่ทุกครั้ง
+            ก็ปรับให้สะอาด เข้าใจง่าย และเก็บไว้ที่นี่ที่เดียว
+          </p>
+
+          <div class="chip-row">
+            <span class="chip">Vanilla JavaScript</span>
+            <span class="chip">ตัวช่วยฝั่ง Front-end</span>
+            <span class="chip">ใช้กับเว็บ Static ได้</span>
+          </div>
+
+          <div class="features">
+            <div class="feature-pill">
+              <strong>นำไปใช้ซ้ำง่าย.</strong> แค่ก๊อปโฟลเดอร์ไปวางก็พร้อมใช้งาน
+            </div>
+            <div class="feature-pill">
+              <strong>แก้ปัญหาจริง.</strong> ทุกตัวช่วยเกิดจาก Pain Point ที่เจอจริง
+            </div>
+            <div class="feature-pill">
+              <strong>ไม่พึ่งเฟรมเวิร์ก.</strong> แค่ HTML, CSS, JS ธรรมดา
+            </div>
+            <div class="feature-pill">
+              <strong>เปิดโค้ดให้ดู.</strong> อยากเรียนรู้ ปรับแต่ง หรือดัดแปลงได้เลย
+            </div>
+          </div>
+
+          <div class="section-title">โมดูลปัจจุบัน: token.js</div>
+          <p>
+            <strong>token.js</strong> เป็นตัวช่วยจัดการโทเคนเล็ก ๆ
+            ที่ใช้ <code>localStorage</code> เหมาะกับงานเบา ๆ อย่างเช่น:
+          </p>
+          <ul class="roadmap-list">
+            <li>
+              <span class="box done"></span>
+              <span class="text">ให้เข้าหน้าบางหน้าได้ครั้งเดียว (one-time access แบบง่าย ๆ)</span>
+            </li>
+            <li>
+              <span class="box"></span>
+              <span class="text">กันการแชร์ลิงก์ตรง โดยบังคับให้เริ่มจากหน้าเริ่มต้นก่อน</span>
+            </li>
+            <li>
+              <span class="box"></span>
+              <span class="text">ล็อกหน้าทดสอบ / เดโม / เครื่องมือเล็ก ๆ แบบเร็ว ๆ</span>
+            </li>
+          </ul>
+        </article>
+
+        <article class="card">
+          <h2>token.js · วิธีใช้งานแบบเร็ว</h2>
+          <p>
+            <strong>token.js</strong> ช่วยสร้างและตรวจสอบโทเคนได้จากฝั่ง browser เลย
+            ไม่ต้องมี backend ก็ใช้ได้
+          </p>
+
+          <div class="section-title">1. เรียกใช้สคริปต์</div>
+          <div class="code-block">
+<pre><code>&lt;script src="token/token.js"&gt;&lt;/script&gt;</code></pre>
+          </div>
+
+          <div class="section-title">2. สร้างโทเคน &amp; เปลี่ยนหน้า</div>
+          <div class="code-label">ตัวอย่าง: จากหน้า Landing</div>
+          <div class="code-block">
+<pre><code>&lt;script&gt;
+  Token.create({
+    target: "secret.html",      // หน้าปลายทาง
+    extraQuery: "from=landing"  // ถ้าอยากส่ง query เพิ่ม
+  });
+&lt;/script&gt;</code></pre>
+          </div>
+
+          <div class="section-title">3. ตรวจโทเคนในหน้าปลายทาง</div>
+          <div class="code-block">
+<pre><code>&lt;script src="token/token.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  // ตัวอย่าง (อาจซ่อน body ไว้ใน CSS ก่อน)
   // body { display: none; }
 
   if (Token.validate()) {
     document.body.style.display = "block";
   } else {
-    // If invalid or already used, send user back
+    // ถ้าโทเคนไม่ผ่าน / ถูกใช้ไปแล้ว
     window.location.href = "index.html";
   }
 &lt;/script&gt;</code></pre>
           </div>
-        </div>
 
-        <p class="section-footer">
-          For more details and the real implementation, check the source file
-          in the GitHub repository.
-        </p>
-      </article>
-    </section>
+          <p class="section-footer">
+            รูปแบบฟังก์ชันจริงอาจมีรายละเอียดมากกว่านี้
+            แนะนำให้เปิดดูที่ไฟล์ <code>token.js</code> ในรีโปเพื่อความอัปเดตล่าสุด
+          </p>
+        </article>
+      </section>
 
-    <section class="grid" style="margin-top:18px;">
-      <article class="card">
-        <h2>Roadmap</h2>
-        <ul class="roadmap-list">
-          <li>
-            <span class="box done"></span>
-            <span class="text">Create base project and token.js module</span>
-          </li>
-          <li>
-            <span class="box"></span>
-            <span class="text">Add more helpers (random utilities, DOM helpers, input validation)</span>
-          </li>
-          <li>
-            <span class="box"></span>
-            <span class="text">Convert helpers to ES Modules for modern workflows</span>
-          </li>
-          <li>
-            <span class="box"></span>
-            <span class="text">Add simple tests and more examples</span>
-          </li>
-          <li>
-            <span class="box"></span>
-            <span class="text">Optionally publish as an npm package in the future</span>
-          </li>
-        </ul>
-      </article>
+      <section class="grid" style="margin-top:18px;">
+        <article class="card">
+          <h2>Roadmap (แผนในอนาคต)</h2>
+          <ul class="roadmap-list">
+            <li>
+              <span class="box done"></span>
+              <span class="text">สร้างโปรเจกต์พื้นฐานและโมดูล token.js</span>
+            </li>
+            <li>
+              <span class="box"></span>
+              <span class="text">เพิ่มตัวช่วยอื่น เช่น random utils, DOM helpers, input validation</span>
+            </li>
+            <li>
+              <span class="box"></span>
+              <span class="text">รองรับ ES Module เพื่องานสาย modern build tools</span>
+            </li>
+            <li>
+              <span class="box"></span>
+              <span class="text">เพิ่มตัวอย่างโค้ดและ test ง่าย ๆ</span>
+            </li>
+            <li>
+              <span class="box"></span>
+              <span class="text">พิจารณาปล่อยเป็น npm package ในอนาคต</span>
+            </li>
+          </ul>
+        </article>
 
-      <article class="card">
-        <h2>About the developer</h2>
-        <p>
-          Hello, I'm <strong>Danupol Saengnakhon (Taithai)</strong> — a student who
-          enjoys building practical tools, experimenting with web technologies,
-          and reusing my own code in smarter ways.
-        </p>
-        <p style="margin-top:8px;">
-          This project started as a personal toolbox, but I'm happy if others
-          find it useful or learn something from it too.
-        </p>
-        <p class="section-footer">
-          If you have ideas for new helpers or want to improve existing ones,
-          feel free to open an Issue or Pull Request on GitHub. 🤝
-        </p>
-      </article>
-    </section>
+        <article class="card">
+          <h2>เกี่ยวกับผู้พัฒนา</h2>
+          <p>
+            สวัสดีครับ ผม <strong>Danupol Saengnakhon (Taithai)</strong>  
+            สนุกกับการลองของใหม่บนเว็บ ชอบทำเครื่องมือเล็ก ๆ
+            ที่ช่วยลดงานซ้ำซ้อนเวลาเริ่มโปรเจกต์ใหม่
+          </p>
+          <p style="margin-top:8px;">
+            โปรเจกต์นี้เริ่มจากการทำกล่องเครื่องมือใช้เอง
+            แต่ถ้าใครเอาไปต่อยอดได้ ผมก็ยินดีมากครับ 💛
+          </p>
+          <p class="section-footer">
+            ถ้ามีไอเดียตัวช่วยใหม่ หรืออยากช่วยปรับปรุงโค้ด
+            สามารถเปิด Issue หรือ Pull Request บน GitHub ได้เลย 🤝
+          </p>
+        </article>
+      </section>
+    </main>
 
     <footer class="footer">
       Made with ☕ &amp; curiosity ·
       <a href="https://github.com/taithai-tai" target="_blank" rel="noopener">Taithai on GitHub</a>
     </footer>
-  </main>
+  </div>
+
+  <script>
+    (function () {
+      const THEME_KEY = "app_theme";
+      const LANG_KEY = "app_lang";
+
+      const themeBtn = document.querySelector("[data-toggle-theme]");
+      const langBtns = document.querySelectorAll("[data-lang-btn]");
+      const pageEn = document.getElementById("page-en");
+      const pageTh = document.getElementById("page-th");
+
+      function applyTheme(theme) {
+        const root = document.documentElement;
+        if (theme !== "light" && theme !== "dark") theme = "dark";
+        root.setAttribute("data-theme", theme);
+        localStorage.setItem(THEME_KEY, theme);
+
+        // ปรับสถานะปุ่ม
+        if (theme === "dark") {
+          themeBtn.classList.add("active");
+          themeBtn.querySelector(".icon").textContent = "🌙";
+          themeBtn.querySelector(".label").textContent = "Dark";
+        } else {
+          themeBtn.classList.add("active");
+          themeBtn.querySelector(".icon").textContent = "☀️";
+          themeBtn.querySelector(".label").textContent = "Light";
+        }
+      }
+
+      function toggleTheme() {
+        const current = document.documentElement.getAttribute("data-theme") || "dark";
+        applyTheme(current === "dark" ? "light" : "dark");
+      }
+
+      function applyLang(lang) {
+        if (lang !== "th" && lang !== "en") lang = "en";
+        localStorage.setItem(LANG_KEY, lang);
+
+        // แสดง/ซ่อนหน้า
+        if (lang === "en") {
+          pageEn.classList.add("active");
+          pageTh.classList.remove("active");
+        } else {
+          pageTh.classList.add("active");
+          pageEn.classList.remove("active");
+        }
+
+        // ปรับปุ่ม
+        langBtns.forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.langBtn === lang);
+        });
+      }
+
+      // Event listeners
+      themeBtn.addEventListener("click", toggleTheme);
+
+      langBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          applyLang(btn.dataset.langBtn);
+        });
+      });
+
+      // Init from localStorage
+      const savedTheme = localStorage.getItem(THEME_KEY) || "dark";
+      const savedLang = localStorage.getItem(LANG_KEY) || "en";
+
+      applyTheme(savedTheme);
+      applyLang(savedLang);
+    })();
+  </script>
 </body>
 </html>
